@@ -81,3 +81,41 @@ class NotesApp:
                 return note
         return None
 
+    def print_notes(self):
+        for note in self.notes:
+            print(f"ID: {note.id}")
+            print(f"Заголовок: {note.title}")
+            print(f"Текст: {note.body}")
+            print(f"Дата создания: {note.create_date}")
+            print(f"Дата последнего изменения: {note.update_date}")
+            print("-" * 15)
+
+    def run(self):
+        print("Добро пожаловать в приложение заметки!")
+        while True:
+            print("Выберите желаемое действие")
+            print("1. Посмотреть список заметок")
+            print("2. Добавить заметку")
+            print("3. Редактировать заметку")
+            print("4. Удалить заметку")
+            print("5. Выйти из приложения")
+
+            choice = input("Введите номер действия: ")
+            if choice == "1":
+                self.print_notes()
+            elif choice == "2":
+                self.add_note()
+            elif choice == "3":
+                self.edit_note()
+            elif choice == "4":
+                self.delete_note()
+            elif choice == "5":
+                print("Спасибо за использование приложения!")
+                break
+            else:
+                print("Ошибка: выберите действие из списка.")
+
+
+if __name__ == "__main__":
+    app = NotesApp("notes.json")
+    app.run()
