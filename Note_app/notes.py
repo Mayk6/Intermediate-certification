@@ -12,11 +12,10 @@ class Note:
         self.update_date = update_date
 
     def __repr__(self):
-        return f"Заметка <id={self.id}," \
-               f"Заголовок='{self.title}'," \
-               f"Тело='{self.body}'," \
-               f"Дата создания={self.create_date}," \
-               f"Дата изменения={self.update_date}>"
+        return f"\nЗаголовок: {self.title}\n" \
+               f"Текст: {self.body}\n" \
+               f"Дата создания: {self.create_date}\n" \
+               f"Дата изменения: {self.update_date}"
 
 
 class NotesApp:
@@ -38,7 +37,7 @@ class NotesApp:
             json.dump(notes_data, file)
 
     def add_note(self):
-        title = input("Введите заголовок заметки: ")
+        title = input("\nВведите заголовок заметки: ")
         body = input("Введите текст заметки: ")
         create_date = time.strftime("%Y-%m-%d %H:%M:%S")
         note = Note(
@@ -53,7 +52,7 @@ class NotesApp:
         print("Заметка успешно добавлена")
 
     def edit_note(self):
-        note_id = int(input("Введите id заметки для редактирования: "))
+        note_id = int(input("\nВведите id заметки для редактирования: "))
         note = self.get_note_by_id(note_id)
         if note:
             title = input("Введите новый заголовок для заметки: ")
@@ -66,12 +65,20 @@ class NotesApp:
             print("Заметка с таким id не найдена.")
 
     def delete_note(self):
-        note_id = int(input("Введите id заметки для удаления: "))
+        note_id = int(input("\nВведите id заметки для удаления: "))
         note = self.get_note_by_id(note_id)
         if note:
             self.notes.remove(note)
             self.save_notes()
             print("Заметка успешно удалена!")
+        else:
+            print("Заметка с таким id не найдена.")
+
+    def print_note(self):
+        note_id = int(input("Введите id заметки для просмотра: "))
+        note = self.get_note_by_id(note_id)
+        if note:
+            print(note)
         else:
             print("Заметка с таким id не найдена.")
 
@@ -82,34 +89,43 @@ class NotesApp:
         return None
 
     def print_notes(self):
-        for note in self.notes:
-            print(f"ID: {note.id}")
-            print(f"Заголовок: {note.title}")
-            print(f"Текст: {note.body}")
-            print(f"Дата создания: {note.create_date}")
-            print(f"Дата последнего изменения: {note.update_date}")
-            print("-" * 15)
+        filter_date = input(
+            "Введите дату (ГГГГ-ММ-ДД) для фильтрации по дате или нажмите Enter, чтобы вывести все заметки: ")
+        filtered_notes = self.notes
+        if filter_date:
+            filtered_notes = [note for note in self.notes if note.create_date.startswith(filter_date)]
+        if filtered_notes:
+            print("{:<5} {:<20} {:<20} {:<40}".format("ID", "Заголовок", "Дата создания", "Дата изменения"))
+            print("-" * 75)
+            for note in filtered_notes:
+                print("{:<5} {:<20} {:<20} {:<40}".format(note.id, note.title, note.create_date, note.update_date))
+        else:
+            print("Список заметок пуст.")
+            return
 
     def run(self):
         print("Добро пожаловать в приложение заметки!")
         while True:
-            print("Выберите желаемое действие")
+            print("\nВыберите желаемое действие")
             print("1. Посмотреть список заметок")
-            print("2. Добавить заметку")
-            print("3. Редактировать заметку")
-            print("4. Удалить заметку")
-            print("5. Выйти из приложения")
+            print("2. Посмотреть заметку")
+            print("3. Добавить заметку")
+            print("4. Редактировать заметку")
+            print("5. Удалить заметку")
+            print("6. Выйти из приложения")
 
             choice = input("Введите номер действия: ")
             if choice == "1":
                 self.print_notes()
             elif choice == "2":
-                self.add_note()
+                self.print_note()
             elif choice == "3":
-                self.edit_note()
+                self.add_note()
             elif choice == "4":
-                self.delete_note()
+                self.edit_note()
             elif choice == "5":
+                self.delete_note()
+            elif choice == "6":
                 print("Спасибо за использование приложения!")
                 break
             else:
